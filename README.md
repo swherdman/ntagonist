@@ -2,6 +2,8 @@
 
 A client-side web app that generates `.bin` memory dumps for NTAG213/215/216 NFC tags. Load the output onto devices like the Chameleon Ultra.
 
+**[Try it live](https://swherdman.github.io/ntagonist/)**
+
 ## Features
 
 - Fully client-side — no server, no dependencies, no build step

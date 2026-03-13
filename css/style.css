@@ -77,6 +77,19 @@ header {
   margin-top: 0.25rem;
 }
 
+.github-link {
+  display: inline-block;
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.github-link:hover {
+  color: var(--text);
+}
+
 /* Small screens: compact logo */
 @media (max-width: 790px) {
   .logo-icon {
