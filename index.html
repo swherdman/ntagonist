@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ntagonist — NTAG NFC .bin Generator</title>
+  <link rel="icon" type="image/svg+xml" href="img/icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <svg class="logo-icon" viewBox="-4 -4 54 44" aria-hidden="true">
+        <rect x="0" y="0" width="28" height="36" rx="5" fill="none" stroke="#AFA9EC" stroke-width="2" transform="rotate(-6 14 18)"/>
+        <circle cx="11" cy="8" r="3.5" fill="none" stroke="#AFA9EC" stroke-width="1.6" transform="rotate(-6 14 18)"/>
+        <path d="M32 18 Q40 12 40 18 Q40 24 32 18" fill="none" stroke="#AFA9EC" stroke-width="1.8" stroke-linecap="round" opacity="0.65"/>
+        <path d="M36 18 Q48 9 48 18 Q48 27 36 18" fill="none" stroke="#AFA9EC" stroke-width="1.4" stroke-linecap="round" opacity="0.35"/>
+      </svg>
+      <div class="logo-text">
+        <span class="logo-ntag">ntag</span>
+        <span class="logo-onist">onist</span>
+      </div>
+    </div>
+    <p class="subtitle">NTAG NFC .bin Generator</p>
+  </header>
+
+  <main>
+    <section class="panel form-panel">
+      <nav id="tab-bar" class="tab-bar">
+        <button data-type="vcard" class="tab active">vCard</button>
+        <button data-type="url" class="tab">URL</button>
+        <button data-type="text" class="tab">Text</button>
+        <button data-type="wifi" class="tab">WiFi</button>
+      </nav>
+
+      <form id="form-container" class="form-container" autocomplete="off">
+        <!-- Dynamic form fields rendered by ui.js -->
+      </form>
+    </section>
+
+    <div class="sidebar">
+      <section class="panel output-panel">
+        <div class="form-group">
+          <label for="variant-select">Tag Type</label>
+          <select id="variant-select">
+            <option value="">Auto (smallest fit)</option>
+            <option value="NTAG213">NTAG213 (144 bytes)</option>
+            <option value="NTAG215">NTAG215 (504 bytes)</option>
+            <option value="NTAG216">NTAG216 (888 bytes)</option>
+          </select>
+        </div>
+
+        <div id="size-indicator" class="size-indicator">
+          <div class="size-bar">
+            <div id="size-bar-fill" class="size-bar-fill ok"></div>
+          </div>
+          <span id="size-label" class="size-label"></span>
+        </div>
+
+        <div class="output-row">
+          <div class="form-group">
+            <label for="bin-name">File Name</label>
+            <input type="text" id="bin-name" placeholder="my-tag" />
+          </div>
+          <div class="form-group">
+            <label for="uid-input">UID</label>
+            <input type="text" id="uid-input" placeholder="04:AB:CD:EF:12:34:56" maxlength="20" />
+          </div>
+        </div>
+
+        <div id="error-display" class="error-display"></div>
+
+        <div class="action-buttons">
+          <button id="generate-btn" type="button" class="btn btn-primary">Generate</button>
+          <button id="generate-download-btn" type="button" class="btn btn-download">Download</button>
+          <button id="generate-download-save-btn" type="button" class="btn btn-save">Download & Save</button>
+        </div>
+
+        <div class="hex-section">
+          <button id="hex-toggle" type="button" class="btn-link">Show Hex Preview</button>
+          <pre id="hex-preview" class="hex-preview"><code id="hex-content"></code></pre>
+        </div>
+      </section>
+
+      <aside class="panel profiles-panel">
+        <div class="profiles-header">
+          <h2>Saved Profiles</h2>
+        </div>
+        <div id="profile-list" class="profile-list">
+          <p class="empty-profiles">No saved profiles</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
