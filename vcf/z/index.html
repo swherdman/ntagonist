@@ -47,37 +47,44 @@
     <p id="message">Loading contact...</p>
   </div>
   <script>
-    (function () {
-      const card = document.getElementById('card');
-      const spinner = document.getElementById('spinner');
-      const message = document.getElementById('message');
+    (async function () {
+      var spinner = document.getElementById('spinner');
+      var message = document.getElementById('message');
 
       function showResult(html) {
         spinner.style.display = 'none';
         message.innerHTML = html;
       }
 
-      const hash = window.location.hash.substring(1);
+      var hash = window.location.hash.substring(1);
       if (!hash) {
         showResult(
           '<h1>ntagonist</h1>' +
-          '<p>This page receives contact data from NFC tags.<br>' +
+          '<p>This page receives compressed contact data from NFC tags.<br>' +
           'Visit <a href="https://swherdman.github.io/ntagonist/">ntagonist</a> to create one.</p>'
         );
         return;
       }
 
       try {
-        const vcard = atob(hash);
+        // base64url → standard base64
+        var b64 = hash.replace(/-/g, '+').replace(/_/g, '/');
+        while (b64.length % 4) b64 += '=';
+        var bytes = Uint8Array.from(atob(b64), function (c) { return c.charCodeAt(0); });
+
+        // Decompress with native deflate-raw
+        var stream = new Blob([bytes]).stream()
+          .pipeThrough(new DecompressionStream('deflate-raw'));
+        var vcard = await new Response(stream).text();
 
         // Extract FN for filename
-        const fnMatch = vcard.match(/^FN:(.+)$/m);
-        const name = fnMatch ? fnMatch[1].trim().replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_') : 'contact';
+        var fnMatch = vcard.match(/^FN:(.+)$/m);
+        var name = fnMatch ? fnMatch[1].trim().replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_') : 'contact';
 
-        const blob = new Blob([vcard], { type: 'text/vcard' });
-        const url = URL.createObjectURL(blob);
+        var blob = new Blob([vcard], { type: 'text/vcard' });
+        var url = URL.createObjectURL(blob);
 
-        const a = document.createElement('a');
+        var a = document.createElement('a');
         a.href = url;
         a.download = name + '.vcf';
         document.body.appendChild(a);
@@ -90,7 +97,7 @@
           'If nothing happened, <a href="' + url + '" download="' + name + '.vcf">tap here to download</a>.</p>'
         );
 
-        // Redirect away after download triggers so user doesn't linger on this page
+        // Redirect away after download triggers
         setTimeout(function () {
           URL.revokeObjectURL(url);
           window.location.replace('about:blank');
@@ -99,7 +106,7 @@
         showResult(
           '<h1>Error</h1>' +
           '<p class="error">Could not decode the contact data.<br>' +
-          'The NFC tag may contain invalid data.</p>'
+          'The NFC tag may contain invalid data or your browser may not support decompression.</p>'
         );
       }
     })();

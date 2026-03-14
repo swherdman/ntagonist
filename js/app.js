@@ -29,7 +29,7 @@ function getUid() {
   return raw ? parseUid(raw) : null;
 }
 
-function livePreview() {
+async function livePreview() {
   clearError();
   if (!hasData(currentRecordType)) {
     hideSizeIndicator();
@@ -39,7 +39,7 @@ function livePreview() {
 
   try {
     const data = getFormData(currentRecordType);
-    const ndefBytes = encodeNdefMessage(currentRecordType, data);
+    const ndefBytes = await encodeNdefMessage(currentRecordType, data);
     const result = buildNtagBinary(ndefBytes, manualVariant, getUid());
 
     if (result.error) {
@@ -56,7 +56,7 @@ function livePreview() {
 }
 
 // Core generate — returns { blob, filename, result } or null on error
-function generate() {
+async function generate() {
   clearError();
   if (!hasData(currentRecordType)) {
     showError('Please fill in at least one field.');
@@ -65,7 +65,7 @@ function generate() {
 
   try {
     const data = getFormData(currentRecordType);
-    const ndefBytes = encodeNdefMessage(currentRecordType, data);
+    const ndefBytes = await encodeNdefMessage(currentRecordType, data);
     const result = buildNtagBinary(ndefBytes, manualVariant, getUid());
 
     if (result.error) {
@@ -103,17 +103,17 @@ initUI({
     livePreview();
   },
 
-  onGenerate() {
-    generate();
+  async onGenerate() {
+    await generate();
   },
 
-  onGenerateDownload() {
-    const out = generate();
+  async onGenerateDownload() {
+    const out = await generate();
     if (out) triggerDownload(out.blob, out.filename);
   },
 
-  onGenerateDownloadSave() {
-    const out = generate();
+  async onGenerateDownloadSave() {
+    const out = await generate();
     if (!out) return;
     triggerDownload(out.blob, out.filename);
     // Use the file name (without .bin) as the profile name

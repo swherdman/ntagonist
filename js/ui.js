@@ -52,6 +52,10 @@ function vcardFormHTML() {
         <label class="mode-label"><input type="radio" name="vcardMode" value="url" /> URL (iPhone)</label>
         <label class="mode-label"><input type="radio" name="vcardMode" value="both" /> Both</label>
       </div>
+      <label class="toggle-label vcard-compress-toggle" style="display:none">
+        <input type="checkbox" id="vcard-compress" class="toggle-input" />
+        <span class="toggle-switch"></span> Compress
+      </label>
     </div>
 
     <div class="vcard-toggles">
@@ -422,6 +426,12 @@ export function initUI(callbacks) {
       formContainer.classList.toggle('show-legacy', e.target.checked);
       callbacks.onFormInput();
     }
+    // vCard encoding mode — show/hide compress toggle
+    if (e.target.name === 'vcardMode') {
+      const compress = document.querySelector('.vcard-compress-toggle');
+      if (compress) compress.style.display = (e.target.value === 'traditional') ? 'none' : 'flex';
+      callbacks.onFormInput();
+    }
     // Social service custom toggle
     if (e.target.name === 'socialService') {
       const customInput = e.target.closest('.dynamic-row')?.querySelector('.social-custom-input');
@@ -501,6 +511,7 @@ export function getFormData(recordType) {
     case 'vcard':
       return {
         vcardMode: document.querySelector('input[name="vcardMode"]:checked')?.value || 'traditional',
+        vcardCompress: document.getElementById('vcard-compress')?.checked || false,
         // Basic
         prefix: val('prefix'), firstName: val('firstName'), lastName: val('lastName'),
         org: val('org'), title: val('title'),
@@ -557,6 +568,10 @@ export function setFormData(recordType, data) {
       // Encoding mode
       const modeRadio = document.querySelector(`input[name="vcardMode"][value="${data.vcardMode || 'traditional'}"]`);
       if (modeRadio) modeRadio.checked = true;
+      const compressEl = document.getElementById('vcard-compress');
+      if (compressEl) compressEl.checked = !!data.vcardCompress;
+      const compressToggle = document.querySelector('.vcard-compress-toggle');
+      if (compressToggle) compressToggle.style.display = (data.vcardMode === 'traditional' || !data.vcardMode) ? 'none' : 'flex';
       // Basic
       setVal('prefix', data.prefix); setVal('firstName', data.firstName); setVal('lastName', data.lastName);
       setVal('org', data.org); setVal('title', data.title);

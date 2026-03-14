@@ -326,6 +326,7 @@ export function encodeWifiRecord(config) {
 }
 
 const VCF_BASE = 'https://swherdman.github.io/ntagonist/vcf/#';
+const VCF_COMPRESSED_BASE = 'https://swherdman.github.io/ntagonist/vcf/z/#';
 
 function buildUriPayload(uri) {
   let bestIndex = 0;
@@ -341,7 +342,15 @@ function buildUriPayload(uri) {
   return concat(new Uint8Array([bestIndex]), remainder);
 }
 
-export function encodeNdefMessage(recordType, data) {
+async function compressVcardUrl(vcardText) {
+  const stream = new Blob([vcardText]).stream()
+    .pipeThrough(new CompressionStream('deflate-raw'));
+  const buf = await new Response(stream).arrayBuffer();
+  const b64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+  return VCF_COMPRESSED_BASE + b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+export async function encodeNdefMessage(recordType, data) {
   switch (recordType) {
     case 'url':   return encodeUriRecord(data.uri);
     case 'text':  return encodeTextRecord(data.text, data.lang);
@@ -353,7 +362,9 @@ export function encodeNdefMessage(recordType, data) {
         return buildNdefRecord(0x02, 'text/vcard', encoder.encode(vcardText));
       }
 
-      const vcardUrl = VCF_BASE + btoa(vcardText);
+      const vcardUrl = data.vcardCompress
+        ? await compressVcardUrl(vcardText)
+        : VCF_BASE + btoa(vcardText);
 
       if (mode === 'url') {
         return buildNdefRecord(0x01, 'U', buildUriPayload(vcardUrl));
