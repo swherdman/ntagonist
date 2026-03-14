@@ -1,12 +1,12 @@
 # ntagonist
 
-A client-side web app that generates `.bin` memory dumps for NTAG213/215/216 NFC tags. Load the output onto devices like the Chameleon Ultra.
+A client-side web app that generates `.bin` memory dumps for NTAG213/215/216 NFC tags. Load the output onto devices like the [Chameleon Ultra](https://github.com/RfidResearchGroup/ChameleonUltra).
 
-**[Try it live](https://swherdman.github.io/ntagonist/)**
+**[Use it now](https://swherdman.github.io/ntagonist/)** - or clone the repo and run it locally:
 
 ## Features
 
-- Fully client-side — no server, no dependencies, no build step
+- Fully client-side - no server, no dependencies, no build step
 - Auto-selects smallest NTAG variant that fits the data
 - Optional custom UID and file naming
 - Hex preview of raw binary output
@@ -14,10 +14,10 @@ A client-side web app that generates `.bin` memory dumps for NTAG213/215/216 NFC
 
 ## Supported Record Types
 
-- **vCard** — common fields shown by default, with additional fields available under Advanced and Legacy toggles
-- **URL** — with NFC Forum URI prefix compression
-- **Text** — plain text with language code
-- **WiFi** — WPA/WPA2 network credentials via WSC encoding
+- **vCard** - common fields shown by default, with additional fields available under Advanced and Legacy toggles
+- **URL** - with NFC Forum URI prefix compression
+- **Text** - plain text with language code
+- **WiFi** - WPA/WPA2 network credentials via WSC encoding
 
 ## Usage
 

@@ -740,3 +740,129 @@ select.email-type-select {
   color: var(--red);
   border-color: var(--red);
 }
+
+/* Mobile: phones (~375px) */
+@media (max-width: 480px) {
+  /* Stack multi-column rows */
+  .form-row {
+    flex-direction: column;
+  }
+  .form-row > .form-group {
+    flex: unset;
+  }
+  .form-group--prefix,
+  .form-group--lang {
+    flex: unset;
+    max-width: unset;
+  }
+  .output-row {
+    flex-direction: column;
+  }
+  .form-row-inline {
+    flex-direction: column;
+  }
+  .form-row-inline input[type="url"] {
+    width: 100%;
+  }
+  .form-row-inline .label-input {
+    flex: unset;
+    width: 100%;
+  }
+
+  /* Dynamic rows: grid card layout */
+  .dynamic-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.35rem;
+    padding: 0.5rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 0.5rem;
+  }
+  .dynamic-row select {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    width: auto;
+    min-width: 70px;
+    max-width: 160px;
+  }
+  .dynamic-row .btn-remove-row {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .dynamic-row input {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .dynamic-row .label-input {
+    grid-column: 1 / -1;
+    width: 100%;
+    flex: unset;
+  }
+  .dynamic-row .social-custom-input.visible {
+    grid-column: 1 / -1;
+    width: 100%;
+    display: block;
+  }
+  .show-advanced .dynamic-row select.email-type-select {
+    display: block;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    width: auto;
+  }
+
+  /* Touch targets (44px minimum) */
+  .btn {
+    min-height: 44px;
+    padding: 0.75rem 1.2rem;
+  }
+  .btn-remove-row {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .btn-add-row {
+    min-height: 44px;
+  }
+  .profile-item {
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .profile-info {
+    flex: 1 1 100%;
+    margin-bottom: 0.3rem;
+  }
+  .profile-type {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.6rem;
+  }
+  .profile-actions {
+    flex: 1 1 100%;
+  }
+  .profile-actions button {
+    min-height: 44px;
+    padding: 0.4rem 0.75rem;
+  }
+  .tab {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  /* Small-screen polish */
+  .panel {
+    padding: 1rem;
+  }
+  .hex-preview {
+    font-size: 0.65rem;
+  }
+  .vcard-toggles {
+    flex-wrap: wrap;
+  }
+}

@@ -19,7 +19,7 @@ function urlFormHTML() {
   return `
     <div class="form-group">
       <label for="uri">URL</label>
-      <input type="url" id="uri" name="uri" placeholder="https://example.com" autocomplete="off" />
+      <input type="url" id="uri" name="uri" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" autocomplete="off" />
     </div>
   `;
 }
@@ -48,7 +48,7 @@ function vcardFormHTML() {
     <fieldset class="form-fieldset">
       <legend>Identity</legend>
       <div class="form-row">
-        <div class="form-group form-group--prefix"><label for="prefix">Title</label><input type="text" id="prefix" name="prefix" placeholder="Mr." /></div>
+        <div class="form-group form-group--prefix"><label for="prefix">Title</label><input type="text" id="prefix" name="prefix" placeholder="Ms." /></div>
         <div class="form-group"><label for="firstName">First Name</label><input type="text" id="firstName" name="firstName" /></div>
         <div class="form-group"><label for="lastName">Last Name</label><input type="text" id="lastName" name="lastName" /></div>
       </div>
