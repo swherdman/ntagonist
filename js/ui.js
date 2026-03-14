@@ -617,12 +617,13 @@ export function setFormData(recordType, data) {
 export function updateSizeIndicator(usedBytes, totalBytes, variantName) {
   const bar = document.getElementById('size-bar-fill');
   const label = document.getElementById('size-label');
-  const pct = Math.min((usedBytes / totalBytes) * 100, 100);
+  const maxBytes = 888; // NTAG216 — bar always represents full range
+  const pct = Math.min((usedBytes / maxBytes) * 100, 100);
 
   bar.style.width = `${pct}%`;
   bar.className = 'size-bar-fill';
-  if (pct > 100) bar.classList.add('over');
-  else if (pct > 80) bar.classList.add('warn');
+  if (usedBytes > totalBytes) bar.classList.add('over');
+  else if (usedBytes > totalBytes * 0.8) bar.classList.add('warn');
   else bar.classList.add('ok');
 
   label.textContent = `${usedBytes} / ${totalBytes} bytes (${variantName})`;

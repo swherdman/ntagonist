@@ -526,8 +526,8 @@ select.email-type-select {
   height: 8px;
   background: var(--bg-input);
   border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 0.3rem;
+  position: relative;
+  margin-bottom: 1.2rem;
 }
 
 .size-bar-fill {
@@ -535,11 +535,37 @@ select.email-type-select {
   border-radius: 4px;
   transition: width 0.3s, background-color 0.3s;
   width: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .size-bar-fill.ok { background: var(--green); }
 .size-bar-fill.warn { background: var(--yellow); }
 .size-bar-fill.over { background: var(--red); }
+
+.size-marker {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: var(--text-muted);
+  opacity: 0.5;
+  z-index: 2;
+}
+
+.size-marker-end {
+  background: none;
+}
+
+.size-marker-label {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
 
 .size-label {
   font-size: 0.75rem;
