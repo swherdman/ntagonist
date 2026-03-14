@@ -741,6 +741,30 @@ select.email-type-select {
   border-color: var(--red);
 }
 
+/* vCard encoding mode selector */
+.vcard-mode-selector {
+  margin-bottom: 1rem;
+}
+
+.vcard-mode-options {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.mode-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.mode-label input[type="radio"] {
+  accent-color: var(--accent);
+}
+
 /* Mobile: phones (~375px) */
 @media (max-width: 480px) {
   /* Stack multi-column rows */
@@ -863,6 +887,9 @@ select.email-type-select {
     font-size: 0.65rem;
   }
   .vcard-toggles {
+    flex-wrap: wrap;
+  }
+  .vcard-mode-options {
     flex-wrap: wrap;
   }
 }

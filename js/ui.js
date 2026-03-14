@@ -39,6 +39,21 @@ function textFormHTML() {
 
 function vcardFormHTML() {
   return `
+    <div class="vcard-mode-selector">
+      <div class="field-hint">
+        <strong>Encoding Mode</strong> — <strong>Traditional</strong> writes a standard
+        vCard record (works natively on Android). <strong>URL</strong> writes a link that
+        opens in Safari and prompts "Add to Contacts" (needed for iPhone).
+        <strong>Both</strong> includes both records for cross-platform compatibility,
+        but uses more tag space.
+      </div>
+      <div class="vcard-mode-options">
+        <label class="mode-label"><input type="radio" name="vcardMode" value="traditional" checked /> Traditional</label>
+        <label class="mode-label"><input type="radio" name="vcardMode" value="url" /> URL (iPhone)</label>
+        <label class="mode-label"><input type="radio" name="vcardMode" value="both" /> Both</label>
+      </div>
+    </div>
+
     <div class="vcard-toggles">
       <label class="toggle-label"><input type="checkbox" id="advanced-toggle" class="toggle-input" /> <span class="toggle-switch"></span> Advanced</label>
       <label class="toggle-label legacy-toggle-wrap"><input type="checkbox" id="legacy-toggle" class="toggle-input" /> <span class="toggle-switch"></span> Legacy</label>
@@ -485,6 +500,7 @@ export function getFormData(recordType) {
       return { text: val('text'), lang: val('lang') || 'en' };
     case 'vcard':
       return {
+        vcardMode: document.querySelector('input[name="vcardMode"]:checked')?.value || 'traditional',
         // Basic
         prefix: val('prefix'), firstName: val('firstName'), lastName: val('lastName'),
         org: val('org'), title: val('title'),
@@ -537,7 +553,10 @@ export function setFormData(recordType, data) {
       setVal('text', data.text);
       setVal('lang', data.lang);
       break;
-    case 'vcard':
+    case 'vcard': {
+      // Encoding mode
+      const modeRadio = document.querySelector(`input[name="vcardMode"][value="${data.vcardMode || 'traditional'}"]`);
+      if (modeRadio) modeRadio.checked = true;
       // Basic
       setVal('prefix', data.prefix); setVal('firstName', data.firstName); setVal('lastName', data.lastName);
       setVal('org', data.org); setVal('title', data.title);
@@ -567,6 +586,7 @@ export function setFormData(recordType, data) {
       setVal('formattedLabel', data.formattedLabel);
       setVal('sortString', data.sortString); setVal('classification', data.classification);
       break;
+    }
     case 'wifi':
       setVal('ssid', data.ssid);
       setVal('password', data.password);

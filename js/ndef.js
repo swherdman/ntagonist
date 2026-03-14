@@ -82,10 +82,10 @@ function concat(...arrays) {
   return result;
 }
 
-function buildNdefRecord(tnf, type, payload) {
+function buildNdefRecord(tnf, type, payload, mb = true, me = true) {
   const typeBytes = typeof type === 'string' ? encoder.encode(type) : type;
   const sr = payload.length <= 255;
-  const flags = 0x80 | 0x40 | (sr ? 0x10 : 0) | (tnf & 0x07); // MB=1, ME=1, SR flag, TNF
+  const flags = (mb ? 0x80 : 0) | (me ? 0x40 : 0) | (sr ? 0x10 : 0) | (tnf & 0x07);
 
   const header = sr
     ? new Uint8Array([flags, typeBytes.length, payload.length])
@@ -101,20 +101,7 @@ function buildNdefRecord(tnf, type, payload) {
 }
 
 export function encodeUriRecord(uri) {
-  // Find longest matching prefix
-  let bestIndex = 0;
-  let bestLen = 0;
-  for (let i = 1; i < URI_PREFIXES.length; i++) {
-    const prefix = URI_PREFIXES[i];
-    if (uri.startsWith(prefix) && prefix.length > bestLen) {
-      bestIndex = i;
-      bestLen = prefix.length;
-    }
-  }
-
-  const remainder = encoder.encode(uri.slice(bestLen));
-  const payload = concat(new Uint8Array([bestIndex]), remainder);
-  return buildNdefRecord(0x01, 'U', payload);
+  return buildNdefRecord(0x01, 'U', buildUriPayload(uri));
 }
 
 export function encodeTextRecord(text, lang = 'en') {
@@ -137,7 +124,7 @@ function formatAppleLabel(label) {
   return label;
 }
 
-export function encodeVcardRecord(fields) {
+function buildVcardText(fields) {
   const lines = ['BEGIN:VCARD', 'VERSION:3.0'];
   let itemNum = 1; // Counter for X-ABLabel grouped properties
 
@@ -293,7 +280,11 @@ export function encodeVcardRecord(fields) {
   lines.push(`UID:${crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)}`);
 
   lines.push('END:VCARD');
-  const vcardStr = lines.join('\r\n');
+  return lines.join('\r\n');
+}
+
+export function encodeVcardRecord(fields) {
+  const vcardStr = buildVcardText(fields);
   const payload = encoder.encode(vcardStr);
   return buildNdefRecord(0x02, 'text/vcard', payload);
 }
@@ -334,11 +325,45 @@ export function encodeWifiRecord(config) {
   return buildNdefRecord(0x02, 'application/vnd.wfa.wsc', credential);
 }
 
+const VCF_BASE = 'https://swherdman.github.io/ntagonist/vcf/#';
+
+function buildUriPayload(uri) {
+  let bestIndex = 0;
+  let bestLen = 0;
+  for (let i = 1; i < URI_PREFIXES.length; i++) {
+    const prefix = URI_PREFIXES[i];
+    if (uri.startsWith(prefix) && prefix.length > bestLen) {
+      bestIndex = i;
+      bestLen = prefix.length;
+    }
+  }
+  const remainder = encoder.encode(uri.slice(bestLen));
+  return concat(new Uint8Array([bestIndex]), remainder);
+}
+
 export function encodeNdefMessage(recordType, data) {
   switch (recordType) {
     case 'url':   return encodeUriRecord(data.uri);
     case 'text':  return encodeTextRecord(data.text, data.lang);
-    case 'vcard': return encodeVcardRecord(data);
+    case 'vcard': {
+      const mode = data.vcardMode || 'traditional';
+      const vcardText = buildVcardText(data);
+
+      if (mode === 'traditional') {
+        return buildNdefRecord(0x02, 'text/vcard', encoder.encode(vcardText));
+      }
+
+      const vcardUrl = VCF_BASE + btoa(vcardText);
+
+      if (mode === 'url') {
+        return buildNdefRecord(0x01, 'U', buildUriPayload(vcardUrl));
+      }
+
+      // mode === 'both': vCard MIME record + URL record
+      const rec1 = buildNdefRecord(0x02, 'text/vcard', encoder.encode(vcardText), true, false);
+      const rec2 = buildNdefRecord(0x01, 'U', buildUriPayload(vcardUrl), false, true);
+      return concat(rec1, rec2);
+    }
     case 'wifi':  return encodeWifiRecord(data);
     default: throw new Error(`Unknown record type: ${recordType}`);
   }
