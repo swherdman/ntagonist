@@ -432,6 +432,9 @@ export function initUI(callbacks) {
       if (compress) compress.style.display = (e.target.value === 'traditional') ? 'none' : 'flex';
       callbacks.onFormInput();
     }
+    if (e.target.id === 'vcard-compress') {
+      callbacks.onFormInput();
+    }
     // Social service custom toggle
     if (e.target.name === 'socialService') {
       const customInput = e.target.closest('.dynamic-row')?.querySelector('.social-custom-input');
